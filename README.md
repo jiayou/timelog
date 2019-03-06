@@ -2,10 +2,15 @@
 
 ## mobile
 timesheet frontend
-
+register & login
+forgot password
+change profile
 
 ## admin
 statistics anaysis
+people management (id, name, email, role, activated)
+project management (id, project name, productive/non-productive)
+task management (id, project, day, hours, people, description, etc..)
 
 
 ## API
