@@ -36,6 +36,13 @@ export default {
 }
 </script>
 <style>
+.eventBtn {
+    border: 1px dashed black;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 5px;
+}
+
 .eventBtn button {
     width: 100%;
     padding-left: 0px!important;

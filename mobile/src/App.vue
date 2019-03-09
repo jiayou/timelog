@@ -204,6 +204,7 @@ components: {
       // this.day = Date.now()
       var moment = require('moment');
       this.date = moment().format("YYYY-MM-DD dddd")
+      this.offset = 0
     }
 
 
