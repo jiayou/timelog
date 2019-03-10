@@ -7,7 +7,8 @@ docker run -d --name timelog-myadmin --link timelog-mysql:db -p 8306:80 phpmyadm
 sleep 1
 docker ps -a
 
-
-docker exec -it timelog-mysql bash -c "service mysqld status"
-docker exec -it timelog-mysql bash -c "mysql -u root < /db/prepare-database.sql"
+docker exec -it timelog-mysql bash -c "mysql -u root < /db/setup.sql"
+docker exec -it timelog-mysql bash -c "mysql -u timelog < /db/user.sql"
+docker exec -it timelog-mysql bash -c "mysql -u timelog < /db/project.sql"
+docker exec -it timelog-mysql bash -c "mysql -u timelog < /db/task.sql"
 
