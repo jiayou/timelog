@@ -121,33 +121,32 @@ components: {
   },
   created(){
     if(!localStorage.getItem("token")){
-      this.showCon = true;
-      return;
+      this.showCon = true
+      return
     }
-    this.showCon = false;
+    this.showCon = false
   },
   methods: {
     handleSubmit (name) {
-      console.log(name)
         this.$refs[name].validate((valid) => {
             if (valid) {
-                this.$Message.success('Success!');
-                this.showCon = false;
+                this.$Message.success('Success!')
+                this.showCon = false
             } else {
                 // this.$Message.error('Fail!');
-                this.showCon = true;
+                this.showCon = true
             }
         })
     },
     handleReset (name) {
-        this.$refs[name].resetFields();
+        this.$refs[name].resetFields()
     },
     onDelete(idx) {
       let index = this.events.findIndex((e)=>{
-        return e.id == idx;
+        return e.id == idx
       })
-      this.events.splice(index,1);
-      this.item = this.events;
+      this.events.splice(index,1)
+      this.item = this.events
     },
     onClose(item){
       alert(item)
@@ -155,54 +154,61 @@ components: {
 
     onEdit(idx){
       // this.item = this.events[idx]
-      console.log(this.events,">...");
       let index = this.events.findIndex((e)=>{
-        return e.id == idx;
+        return e.id == idx
       })
-      this.item = this.events[index];
+      this.item = this.events[index]
       this.showEditModal = true
     },
 
     onNew() {
       this.newEvent = {
-        id: "xxy",
+        id: `xxy${Math.random()+1}`,
         project: "pro",
         desc: "content",
         hours: parseInt(Math.random()+1),
 
       }
-      // this.showEditModal = true;
-      this.item = this.newEvent;
+      this.showEditModal = true
+      this.item = this.newEvent
       // this.onEdit(this.newEvent.id)
-      this.events.push(this.item)
+      // this.events.push(this.item)
       // this.events.push(event)
     },
 
     onCancel(){
-      console.log("on cancel")
       this.showEditModal = false
     },
     onSubmit(item){
-      this.item = item;
+      let el = this.events.find((e)=>{
+        return e.id ==item.id
+      })
+      if(el){
+        this.item = item
+        return
+      }
+      // this.item = item;
+      this.events.push(item)
+
       this.showEditModal = false
     },
 
     onNextDay(){
       this.offset = this.offset + 1
-      var moment = require('moment');
+      var moment = require('moment')
       this.date = moment().add(this.offset, 'days').format("YYYY-MM-DD dddd")
 
     },
 
     onPrevDay(){
       this.offset = this.offset - 1
-      var moment = require('moment');
+      var moment = require('moment')
       this.date = moment().add(this.offset, 'days').format("YYYY-MM-DD dddd")
     },
 
     onToday(){
       // this.day = Date.now()
-      var moment = require('moment');
+      var moment = require('moment')
       this.date = moment().format("YYYY-MM-DD dddd")
       this.offset = 0
     }
@@ -225,6 +231,7 @@ components: {
   padding-left:0px!important;
   padding-right:0px!important;
 }
+
 .timelog-header-btn {
   box-sizing: border-box!important;
   padding:0 3px 0 0;
