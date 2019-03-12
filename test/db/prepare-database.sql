@@ -7,7 +7,7 @@ CREATE TABLE `timelog`.`project` (
     `priority` INT , 
     `description` VARCHAR(256) ,
     PRIMARY KEY (`id`)
-    ); 
+    )default charset=utf8; 
 
 CREATE TABLE `timelog`.`user` ( 
     `username` VARCHAR(32) , 
@@ -16,7 +16,7 @@ CREATE TABLE `timelog`.`user` (
     `email` VARCHAR(32) , 
     `role` VARCHAR(32) , 
     PRIMARY KEY (`username`)
-    ); 
+    )default charset=utf8; 
 
 CREATE TABLE `timelog`.`task` ( 
     `id` INT AUTO_INCREMENT , 
@@ -26,4 +26,4 @@ CREATE TABLE `timelog`.`task` (
     `hours` INT , 
     `desc` VARCHAR(256) , 
     PRIMARY KEY (`id`)
-    ); 
+    )default charset=utf8; 

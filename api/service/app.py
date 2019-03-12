@@ -1,8 +1,5 @@
 from flask import Flask, Blueprint
 from flask_cors import CORS
-from flask.ext.login import (LoginManager, login_required, login_user,
-                             logout_user, UserMixin)
-
 from flask import request
 from flask import jsonify
 from flask import make_response
@@ -22,22 +19,12 @@ from ORM import Project, User, Task
 from playhouse.shortcuts import model_to_dict, dict_to_model
 from datetime import datetime
 
+
+
 app = Flask(__name__)
+from flaskext.auth import Auth
+auth = Auth(app)
 CORS(app)
-
-# ============ Login
-app.secret_key = 's3cr3t'
-login_manager = LoginManager()
-login_manager.session_protection = 'strong'
-login_manager.login_view = 'auth.login'
-login_manager.init_app(app)
- 
-@login_manager.user_loader
-def load_user(user_id):
-    user = User.select().where(User.id==user_id)
-    return user
-
-# ============
 
 auth = Blueprint('auth', __name__)
 
@@ -51,25 +38,43 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['GET', 'POST'])  # POST:{username, password}
 def login():
-    if 
-    username = request.form['username']
-    password = request.form['password']
-    user = User.select().where(User.username == username)
-    if user.username == username:    
-        login_user(user)
-    else:
-        return 'login failed!'
+    if request.method == 'GET':
+        return "Login Page" #render_template('login.html')
+    if request.method == 'POST':
+        # formData = request.form
+        # print(type(formData))
+        # print(formData)
+        # email = formData.get('email', 'null')
+        # password = formData['password']
+
+        # return render_template('index.html')
+
+        username = request.form['username']
+        password = request.form['password']
+        print username
+        print password
+
+        res = server_response()
+        p = User.select().where(User.username == username)
+
+        res['success'] = True
+        if len(p)==1:
+            user = p[0]
+            print user.username
+            res['user'] = model_to_dict(user)
+        
+        return jsonify(res)
 
 
 @auth.route('/logout', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def logout():
     logout_user()
     return "logout page"
 
 # test method
 @app.route('/test')
-@login_required
+# @login_required
 def test():
     return "yes , you are allowed"
 
@@ -142,6 +147,7 @@ def task_search():
 @app.route('/api/task/<id>', methods=['DELETE'])
 def task_delete(id):
     Task.delete().where(Task.id == id).execute()
+    
 
 @app.route('/api/task/<id>', methods=['PUT'])
 def task_update(id):
@@ -194,6 +200,12 @@ def user_list():
         mimetype='application/json'
     )
 
+def server_response():
+    return {
+        "server_time": datetime.now(),
+        "success": False,
+        "data": []
+    }
 
 '''
 @app.route('/api/task/{user}/{date}', methods=['GET'])

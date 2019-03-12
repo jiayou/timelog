@@ -5,7 +5,7 @@ create table project (
 	category VARCHAR(50),
 	`priority` VARCHAR(50),
 	`description` TEXT
-);
+)default charset=utf8;
 insert into project (id, project_name, category, `priority`, `description`) values (1, 'Marin', 'Ford', 'L', 'Donec ut mauris eget massa tempor convallis.');
 insert into project (id, project_name, category, `priority`, `description`) values (2, 'Gusty', 'Mitsubishi', '3XL', 'In tempor, turpis nec euismod scelerisque, quam turpis adipiscing lorem, vitae mattis nibh ligula nec sem.');
 insert into project (id, project_name, category, `priority`, `description`) values (3, 'Lurline', 'Mazda', 'L', 'Duis consequat dui nec nisi volutpat eleifend.');

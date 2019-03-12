@@ -5,7 +5,8 @@ create table user (
 	`name` VARCHAR(50),
 	email VARCHAR(50),
 	`role` VARCHAR(50)
-);
+)default charset=utf8;
+set names utf8;
 insert into user (id, username, `name`, email, `role`) values (1, 'sdyne0', '澄泓', 'cjanicijevic0@photobucket.com', 'Assistant Media Planner');
 insert into user (id, username, `name`, email, `role`) values (2, 'ftwinterman1', '雪怡', 'ffeldhammer1@timesonline.co.uk', 'Professor');
 insert into user (id, username, `name`, email, `role`) values (3, 'cstorm2', '晓烽', 'osemonin2@chicagotribune.com', 'Marketing Manager');

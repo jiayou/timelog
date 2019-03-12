@@ -6,7 +6,7 @@ create table task (
 	`date` DATE,
 	hours INT,
 	`desc` TEXT
-);
+)default charset=utf8;
 insert into task (id, user_name, project_name, `date`, hours, `desc`) values (1, 'Mathe', 'Internap Corporation', '2019-03-05 13:33:55', 4, 'Nulla tempus.');
 insert into task (id, user_name, project_name, `date`, hours, `desc`) values (2, 'Samantha', 'Stamps.com Inc.', '2019-03-07 22:35:09', 4, 'Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue.');
 insert into task (id, user_name, project_name, `date`, hours, `desc`) values (3, 'Mia', 'Pacific Special Acquisition Corp.', '2019-03-07 15:20:26', 1, 'Vivamus in felis eu sapien cursus vestibulum.');
