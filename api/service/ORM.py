@@ -1,5 +1,4 @@
 from peewee import *
-from flask.ext.login import UserMixin
 
 database = MySQLDatabase('timelog', **{'host': '172.17.0.2', 'charset': 'utf8', 'user': 'timelog', 'use_unicode': True})
 
@@ -33,26 +32,15 @@ class Task(BaseModel):
         table_name = 'task'
         primary_key = False
 
-class User(BaseModel, UserMixin):
+class User(BaseModel):
     email = CharField(null=True)
     id = IntegerField(null=True)
     name = CharField(null=True)
+    password = CharField(null=True)
     role = CharField(null=True)
     username = CharField(null=True)
 
     class Meta:
         table_name = 'user'
         primary_key = False
-
-    def is_authenticated(self):
-        return True
- 
-    def is_actice(self):
-        return True
- 
-    def is_anonymous(self):
-        return False
- 
-    def get_id(self):
-        return "1"
 

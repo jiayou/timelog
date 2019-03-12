@@ -1,18 +1,16 @@
-from flask import Flask, Blueprint
-from flask_cors import CORS
-from flask import request
-from flask import jsonify
-from flask import make_response
-from flask import send_file
-
 import numpy as np
 import time
 import json
 import traceback
 import sys
-
 import logging
+import os
+
+from flask import Flask, request, session, jsonify, make_response, send_file, redirect, url_for, escape, abort
+from flask_cors import CORS
+
 from logging.handlers import RotatingFileHandler
+
 from threading import Thread
 
 from ORM import Project, User, Task
@@ -20,13 +18,10 @@ from playhouse.shortcuts import model_to_dict, dict_to_model
 from datetime import datetime
 
 
-
 app = Flask(__name__)
 from flaskext.auth import Auth
 auth = Auth(app)
 CORS(app)
-
-auth = Blueprint('auth', __name__)
 
 ##        #######   ######   #### ##    ## 
 ##       ##     ## ##    ##   ##  ###   ## 
@@ -36,71 +31,89 @@ auth = Blueprint('auth', __name__)
 ##       ##     ## ##    ##   ##  ##   ### 
 ########  #######   ######   #### ##    ## 
 
-@auth.route('/login', methods=['GET', 'POST'])  # POST:{username, password}
+@app.route('/login', methods=['GET', 'POST'])  # POST:{username, password}
 def login():
     if request.method == 'GET':
         return "Login Page" #render_template('login.html')
     if request.method == 'POST':
-        # formData = request.form
-        # print(type(formData))
-        # print(formData)
-        # email = formData.get('email', 'null')
-        # password = formData['password']
-
-        # return render_template('index.html')
-
         username = request.form['username']
         password = request.form['password']
-        print username
-        print password
 
-        res = server_response()
         p = User.select().where(User.username == username)
-
-        res['success'] = True
-        if len(p)==1:
+        if len(p)==0:
+            return make_error_message("No such user")
+        elif len(p)==1:
             user = p[0]
-            print user.username
-            res['user'] = model_to_dict(user)
-        
-        return jsonify(res)
+            return login_check(user, username, password)
+        else:
+            return make_error_message("Too many users: " + username)
 
+def login_check(user, username, password):
+    if user.password == password:
+        session['username'] = username
+        return login_success(user)
+    else:
+        return make_error_message("Wrong password")
 
-@auth.route('/logout', methods=['GET', 'POST'])
-# @login_required
+def login_success(user):    
+    res = server_response()
+    res['success'] = True
+    res['user'] = model_to_dict(user)
+    return jsonify(res)
+
+def make_error_message(message):    
+    res = server_response()
+    res['success'] = False
+    res['msg'] = message
+    return jsonify(res)
+
+def check_authentication():
+    name = session.get("username", False)
+    if not name:
+        abort(401)    
+
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    logout_user()
-    return "logout page"
+    session.pop('username', None)
+    return redirect(url_for('index'))
 
 # test method
 @app.route('/test')
-# @login_required
-def test():
+def test():    
     return "yes , you are allowed"
 
+########  ########  ######   ####  ######  ######## ######## ########  
+##     ## ##       ##    ##   ##  ##    ##    ##    ##       ##     ## 
+##     ## ##       ##         ##  ##          ##    ##       ##     ## 
+########  ######   ##   ####  ##   ######     ##    ######   ########  
+##   ##   ##       ##    ##   ##        ##    ##    ##       ##   ##   
+##    ##  ##       ##    ##   ##  ##    ##    ##    ##       ##    ##  
+##     ## ########  ######   ####  ######     ##    ######## ##     ## 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    username = request.get_json()['username']
-    password = request.get_json()['password']
+    username = request.form['username']
+    password = request.form['password']
     print 'register Header: %s\nusername: %s, password:%s'% (request.headers, username, password)
     if username <> '' and password <> '':
         if User.select().where(User.username==username).first():
-             return jsonify({
-            'status': 'failure',
-            'msg': u'User name existed!'
+            return jsonify({
+                'success': False,
+                'server_time': time.time(),
+                'msg': u'User name existed!'
             })           
 
         user = User(username=username, password=password)
-        db.session.add(user)
-        db.session.commit()
+        user.save()
         return jsonify({
-        'status': 'success',
-        'msg': 'register OK, please login!'
+            'success': True,
+            'server_time': time.time(),
+            'msg': ''
         })
     return jsonify({
-    'status': 'failure',
-    'msg': 'register fail, check username and password.'
+        'success': False,
+        'server_time': time.time(),
+        'msg': 'register fail, check username and password.'
     })
 
 # TODO: serve static
@@ -119,6 +132,8 @@ def redirect_mobile():
 
 @app.route('/api/task', methods=['GET'])    # ?date=20190301&user=Mike
 def task_search():
+    check_authentication()
+
     res = []
     p = Task.select()
 
@@ -174,6 +189,8 @@ def task_new():
 
 @app.route('/api/project', methods=['GET'])
 def project_list():
+    check_authentication()
+
     res = []
     p = Project.select().where(True)
     for x in p:
@@ -189,6 +206,8 @@ def project_list():
 
 @app.route('/api/user', methods=['GET'])
 def user_list():
+    check_authentication()
+
     res = []
     p = User.select().where(True)
     for x in p:
@@ -202,7 +221,7 @@ def user_list():
 
 def server_response():
     return {
-        "server_time": datetime.now(),
+        "server_time": time.time(),
         "success": False,
         "data": []
     }
@@ -239,13 +258,5 @@ if __name__ == '__main__':
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
 
-
-    # conn=MySQLdb.connect(host='localhost',user='root',passwd='root',port=3306, charset='utf8')
-    # conn.select_db('python')
-    # cur=conn.cursor()
-    # cur.close()
-
-    app.register_blueprint(auth, url_prefix='/auth')
+    app.secret_key = os.urandom(12)
     app.run(port=5000, debug=True, host='0.0.0.0')
-
-    # conn.close()
