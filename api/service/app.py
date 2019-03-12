@@ -1,4 +1,5 @@
-import numpy as np
+#!/usr/bin/env python
+
 import time
 import json
 import traceback
@@ -19,8 +20,6 @@ from datetime import datetime
 
 
 app = Flask(__name__)
-from flaskext.auth import Auth
-auth = Auth(app)
 CORS(app)
 
 ##        #######   ######   #### ##    ## 
