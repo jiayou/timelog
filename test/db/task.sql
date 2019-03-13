@@ -1,6 +1,6 @@
 USE `timelog`;
 create table task (
-	id INT,
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	user_name VARCHAR(50),
 	project_name VARCHAR(150),
 	`date` DATE,

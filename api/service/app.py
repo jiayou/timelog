@@ -160,31 +160,68 @@ def task_search():
 
 @app.route('/api/task/<id>', methods=['DELETE'])
 def task_delete(id):
-    Task.delete().where(Task.id == id).execute()
+    try:
+        Task.delete().where(Task.id == id).execute()
+        return jsonify({
+            'success': True,
+            'server_time': time.time(),
+        })
+    except Exception:
+        print traceback.format_exc()
+        return jsonify({
+            'success': False,
+            'server_time': time.time(),
+            'msg': "Fail to delete task, id=" + id
+        })
     
 
 @app.route('/api/task/<id>', methods=['PUT'])
 def task_update(id):
-    p = Task(
-            user_name = request.form['user_name'], 
-            project_name = request.form['project_name'], 
-            date = request.form['date'],
-            hours = request.form['hours'],
-            desc = request.form['description']
-        )
-    p.id = id
-    p.save()
+    try:
+        obj = request.get_json()
+        q = Task.update(
+            user_name = obj['user_name'], 
+            project_name = obj['project_name'], 
+            date = obj['date'],
+            hours = obj['hours'],
+            desc = obj['desc']
+            ).where(Task.id == id)
+        q.execute()
+        return jsonify({
+            'success': True,
+            'server_time': time.time(),
+        })
+    except Exception:
+        print traceback.format_exc()
+        return jsonify({
+            'success': False,
+            'server_time': time.time(),
+            'msg': "Fail to update task, id=" + id
+        })
 
 @app.route('/api/task', methods=['POST'])
 def task_new():
-    p = Task(
-            user_name = request.form['user_name'], 
-            project_name = request.form['project_name'], 
-            date = request.form['date'],
-            hours = request.form['hours'],
-            desc = request.form['description']
-        )
-    p.save()
+    try:
+        obj = request.get_json()
+        p = Task(
+            user_name = obj['user_name'], 
+            project_name = obj['project_name'], 
+            date = obj['date'],
+            hours = obj['hours'],
+            desc = obj['desc']
+            )
+        p.save()
+        return jsonify({
+            'success': True,
+            'server_time': time.time(),
+        })
+    except Exception:
+        print traceback.format_exc()
+        return jsonify({
+            'success': False,
+            'server_time': time.time(),
+            'msg': "Fail to create new task"
+        })
 
 @app.route('/api/project', methods=['GET'])
 def project_list():
@@ -241,9 +278,8 @@ def server_response():
 @app.route('/api/user', methods=['PUT'])
 @app.route('/api/user', methods=['DELETE'])
 
-@app.route('/auth', methods=['POST'])
 @app.route('/login', methods=['POST'])
-@app.route('/signup', methods=['POST'])
+@app.route('/register', methods=['POST'])
 
 @app.route('/api/stat/last30day/{user}', methods=['GET'])
 
