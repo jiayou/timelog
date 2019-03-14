@@ -1,6 +1,6 @@
 USE `timelog`;
 create table project (
-	id INT,
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	project_name VARCHAR(50),
 	category VARCHAR(50),
 	`priority` VARCHAR(50),

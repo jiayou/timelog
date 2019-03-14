@@ -35,8 +35,28 @@
         <event-item  v-for="v in events" :item=v  @onItemEdit="onEdit" @onItemDelete="onDelete"/>
       </Row>
 
+      <event-item :item={} @onItemNew="onNew" />
+
       <Row class="timelog-new">
         <Button type="success" size="large" long @click="onNew()">New...</Button>
+      </Row>
+
+      <Row class="timelog-clone">
+        <Dropdown style="margin-left: 20px" long>
+            <Button type="primary" size="large" long >
+                Clone
+                <Icon type="ios-arrow-down"></Icon>
+            </Button>
+            <DropdownMenu slot="list">
+                <DropdownItem>yesterday</DropdownItem>
+                <DropdownItem>2 days ago</DropdownItem>
+                <DropdownItem>3 days ago</DropdownItem>
+                <DropdownItem>last week</DropdownItem>
+                <DropdownItem>in 2 weeks</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+
+        <DatePicker type="date" :options="options1" placeholder="Select date" style="width: 200px"></DatePicker>
       </Row>
 
       <Modal

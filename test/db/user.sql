@@ -1,6 +1,6 @@
 USE `timelog`;
 create table user (
-	id INT,
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	username VARCHAR(50),
 	password VARCHAR(50),
 	name VARCHAR(50),
